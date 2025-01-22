@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Academic Vault</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎓 Academic Vault</h1>
+        </header>
+
+        <main>
+            <div class="card">
+                <h2>Store Credential</h2>
+                <label for="document">Enter your credential:</label>
+                <input id="document" type="text" placeholder="">
+                <button id="btnStore" class="btn-primary">Store</button>
+            </div>
+
+            <div class="card">
+                <h2>Check Credential</h2>
+                <label for="document2">Enter credential to check:</label>
+                <input id="document2" type="text" placeholder="">
+                <button id="btnCheck" class="btn-primary">Check</button>
+            </div>
+
+            <div class="result">
+                <h3>Status</h3>
+                <h2 id="result"></h2>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function loadWeb3() {
+            if (window.ethereum) {
+                web3 = new Web3(window.ethereum);
+                const account = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                console.log(account);
+            } else {
+                web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+            }
+        }
+    
+        async function loadContract() {
+            const abi = [ 
+                {
+                    "anonymous": false, 
+                    "inputs": [ 
+                        { "indexed": false, "internalType": "address", "name": "from", "type": "address" },
+                        { "indexed": false, "internalType": "string", "name": "document", "type": "string" },
+                        { "indexed": false, "internalType": "uint256", "name": "blockNumber", "type": "uint256" }
+                    ], 
+                    "name": "Result", 
+                    "type": "event"
+                },
+                {
+                    "inputs": [],
+                    "name": "cashOut",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [{ "internalType": "string", "name": "document", "type": "string" }],
+                    "name": "checkEduCredentials",
+                    "outputs": [],
+                    "stateMutability": "payable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [{ "internalType": "string", "name": "document", "type": "string" }],
+                    "name": "storeEduCredentials",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                }
+            ];
+            const address = '0xb4024d0dAcDf8e0563B6bBfbd24152f4bF5309A2';
+            return await new web3.eth.Contract(abi, address);
+        }
+    
+        async function getCurrentAccount() {
+            const accounts = await web3.eth.getAccounts();
+            return accounts[0];
+        }
+    
+        async function load() {
+            await loadWeb3();
+            const notarizer = await loadContract();
+            const account = await getCurrentAccount();
+    
+            // Listen for the Result event before calling checkEduCredentials
+            notarizer.events.Result({ fromBlock: 'latest' }).on('data', function (event) {
+                if (event.returnValues.from.toLowerCase() === account.toLowerCase()) {
+                    const blockNumber = event.returnValues.blockNumber;
+                    const statusText = blockNumber > 0 ? "Credential is valid" : "Credential is NOT valid";
+                    document.getElementById("result").innerHTML = statusText;
+                }
+            });
+    
+            // Store document
+            document.getElementById("btnStore").onclick = async function () {
+                notarizer.methods.storeEduCredentials(document.getElementById("document").value)
+                    .send({ from: account })
+                    .then(function (tx) {
+                        document.getElementById("result").innerHTML = "Stored: " + tx.transactionHash;
+                    });
+            };
+    
+            // Check document
+            document.getElementById("btnCheck").onclick = async function () {
+                notarizer.methods.checkEduCredentials(document.getElementById("document2").value)
+                    .send({ from: account, value: 1000 })
+                    .on('transactionHash', function (hash) {
+                        console.log("Transaction sent: " + hash);
+                    })
+                    .on('receipt', function (receipt) {
+                        // Do nothing here; we rely on the event listener to update the status
+                        console.log("Transaction receipt: ", receipt);
+                    })
+                    .catch(function (error) {
+                        console.error(error);
+                    });
+            };
+        }
+    
+        load();
+    </script>    
+    
+</body>
+</html>

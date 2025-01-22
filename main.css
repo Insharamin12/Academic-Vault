@@ -1,0 +1,169 @@
+/* General Styles */
+body {
+    font-family: 'Manrope', sans-serif;
+    background: linear-gradient(135deg, #1e1e2f, #3d3d61);
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.container {
+    width: 90%;
+    max-width: 800px;
+    background: #1e1e2f;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #4c43e0, #6c71f6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0;
+    color: #fff;
+}
+
+.header p {
+    font-size: 1rem;
+    color: #ddd;
+    margin-top: 5px;
+}
+
+/* Main Section */
+main {
+    padding: 20px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr;
+    justify-items: center;
+}
+
+/* Card */
+.card {
+    background: #2a2a45;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+/* Form Elements */
+label {
+    font-size: 1rem;
+    color: #bbb;
+}
+
+input {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px 15px;
+    font-size: 1rem;
+    background: #33334d;
+    border: 2px solid #4c43e0;
+    border-radius: 5px;
+    color: #fff;
+    margin-bottom: 15px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border 0.3s ease;
+}
+
+input:focus {
+    border-color: #6c71f6;
+    box-shadow: 0 0 8px rgba(108, 113, 246, 0.5);
+}
+
+/* Button Styles */
+.btn-primary {
+    background: linear-gradient(135deg, #6c71f6, #4c43e0);
+    color: #fff;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #7d82fa, #5a52e2);
+    transform: scale(1.05);
+}
+
+/* Result Section */
+.result {
+    text-align: center;
+    padding: 20px;
+    margin: 10px;
+    background: #33334d;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    word-wrap: break-word; /* Ensures long strings like transaction hashes break into the next line */
+    width: 100%;
+    overflow-wrap: anywhere; /* Forces content to break into the next line if too long */
+    word-break: break-word;
+}
+
+.result h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #bbb;
+}
+
+.result h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #6c71f6;
+    overflow-wrap: break-word; /* Wraps long addresses into multiple lines */
+    word-wrap: break-word;
+    word-break: break-all; /* Avoid overflow by breaking any string */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .card h2 {
+        font-size: 1.3rem;
+    }
+
+    input {
+        font-size: 0.9rem;
+    }
+
+    .btn-primary {
+        font-size: 0.9rem;
+        padding: 10px 15px;
+    }
+
+    main {
+        gap: 15px;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 600px;
+    }
+}
